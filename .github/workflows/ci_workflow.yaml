@@ -1,4 +1,4 @@
-name: Pester Tests
+name: CI Workflow
 
 on:
     push:
@@ -39,8 +39,12 @@ jobs:
             - name: Install Dependencies
               shell: pwsh
               run: |
-                  Install-Module "Microsoft.PowerShell.SecretManagement","Microsoft.PowerShell.SecretStore" -Force -Scope CurrentUser
+                  Install-Module "Microsoft.PowerShell.SecretManagement","Microsoft.PowerShell.SecretStore","InvokeBuild" -Force -Scope CurrentUser
 
+            - name: Build Module
+              shell: pwsh
+              run: Invoke-Build -File ./build.ps1 -Task Build
+            
             - name: Run Pester Tests
               shell: pwsh
               run: Invoke-Pester -CI -PassThru

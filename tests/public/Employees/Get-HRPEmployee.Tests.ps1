@@ -1,16 +1,5 @@
-BeforeAll {
-    # Dot-source public functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\public\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-
-    # Dot-source private functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\private\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-}
+# Execute setup script. Imports the correct module for the environment. 
+. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
 
 Describe "Get-HRPEmployee" {
     BeforeAll {
@@ -30,7 +19,7 @@ Describe "Get-HRPEmployee" {
             }
         )
 
-        Mock Invoke-HRPAPI {
+        Mock Invoke-HRPAPI -ModuleName HRProPS {
             $testResponse
         }
     }
@@ -54,14 +43,14 @@ Describe "Get-HRPEmployee" {
             $expectedUri = "https://api.hrapi.co.uk/api/Employee/1"
             Get-HRPEmployee -ID 1
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
         }
 
         It "returns nothing when API returns nothing" {
-            Mock Invoke-HRPAPI { $null }
+            Mock Invoke-HRPAPI -ModuleName HRProPS { $null }
             $response = Get-HRPEmployee -ID 2
             $response | Should -Be $null
         }

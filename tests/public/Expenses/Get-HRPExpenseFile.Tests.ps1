@@ -1,16 +1,5 @@
-BeforeAll {
-    # Dot-source public functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\public\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-
-    # Dot-source private functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\private\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-}
+# Execute setup script. Imports the correct module for the environment. 
+. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
 
 Describe "Get-HRPExpenseFile" {
     BeforeAll {
@@ -25,7 +14,7 @@ Describe "Get-HRPExpenseFile" {
             }
         )
 
-        Mock Invoke-HRPAPI {
+        Mock Invoke-HRPAPI -ModuleName HRProPS {
             $testResponse
         }
     }
@@ -60,7 +49,7 @@ Describe "Get-HRPExpenseFile" {
             $expectedUri = "https://api.hrapi.co.uk/api/ExpenseFile/Expense/12345"
             Get-HRPExpenseFile -ExpenseID 12345 
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
@@ -70,14 +59,14 @@ Describe "Get-HRPExpenseFile" {
             $expectedUri = "https://api.hrapi.co.uk/api/ExpenseFile/6789101112"
             Get-HRPExpenseFile -ExpenseFileID 6789101112
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
         }
 
         It "returns nothing when API returns nothing" {
-            Mock Invoke-HRPAPI { $null }
+            Mock Invoke-HRPAPI -ModuleName HRProPS { $null }
             $response = Get-HRPExpenseFile -ExpenseFileID 6789101112
             $response | Should -Be $null
         }
