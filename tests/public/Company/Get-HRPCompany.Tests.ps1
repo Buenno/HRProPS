@@ -1,16 +1,5 @@
-BeforeAll {
-    # Dot-source public functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\public\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-
-    # Dot-source private functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\private\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-}
+# Execute setup script. Imports the correct module for the environment. 
+. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
 
 Describe "Get-HRPCompany" {
     BeforeAll {
@@ -19,7 +8,7 @@ Describe "Get-HRPCompany" {
             Email     = "test@company.com"
         }
 
-        Mock Invoke-HRPAPI {
+        Mock Invoke-HRPAPI -ModuleName HRProPS {
             $testResponse
         }
     }
@@ -34,7 +23,7 @@ Describe "Get-HRPCompany" {
         }
         
         It "returns nothing when API returns nothing" {
-            Mock Invoke-HRPAPI { $null }
+            Mock Invoke-HRPAPI -ModuleName HRProPS { $null }
             $response = Get-HRPCompany
             $response | Should -Be $null
         }

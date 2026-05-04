@@ -1,16 +1,5 @@
-BeforeAll {
-    # Dot-source public functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\public\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-
-    # Dot-source private functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\private\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-}
+# Execute setup script. Imports the correct module for the environment. 
+. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
 
 Describe "Get-HRPExpense" {
     BeforeAll {
@@ -21,7 +10,7 @@ Describe "Get-HRPExpense" {
             }
         )
 
-        Mock Invoke-HRPAPI {
+        Mock Invoke-HRPAPI -ModuleName HRProPS {
             $testResponse
         }
     }
@@ -63,7 +52,7 @@ Describe "Get-HRPExpense" {
             $expectedUri = "https://api.hrapi.co.uk/api/Expense/12345"
             Get-HRPExpense -ExpenseID 12345 
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
@@ -73,14 +62,14 @@ Describe "Get-HRPExpense" {
             $expectedUri = "https://api.hrapi.co.uk/api/Expense/Employee/12345/Submit/67890"
             Get-HRPExpense -EmployeeID 12345 -Submit 67890
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
         }
 
         It "returns nothing when API returns nothing" {
-            Mock Invoke-HRPAPI { $null }
+            Mock Invoke-HRPAPI -ModuleName HRProPS { $null }
             $response = Get-HRPExpense -EmployeeID 12345 -Submit 67890
             $response | Should -Be $null
         }

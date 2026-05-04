@@ -1,16 +1,5 @@
-BeforeAll {
-    # Dot-source public functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\public\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-
-    # Dot-source private functions
-    Get-ChildItem -Path "$PSScriptRoot\..\..\..\src\private\" -Recurse -Filter *.ps1 |
-        ForEach-Object {
-            . $_.FullName
-        }
-}
+# Execute setup script. Imports the correct module for the environment. 
+. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
 
 Describe "Get-HRPEventCalendar" {
     BeforeAll {
@@ -25,7 +14,7 @@ Describe "Get-HRPEventCalendar" {
             }
         )
 
-        Mock Invoke-HRPAPI {
+        Mock Invoke-HRPAPI -ModuleName HRProPS {
             $testResponse
         }
     }
@@ -45,7 +34,7 @@ Describe "Get-HRPEventCalendar" {
             $expectedUri = "https://api.hrapi.co.uk/api/Event-Calendar/12345/1970"
             Get-HRPEventCalendar -ID 12345 -Year (Get-Date "1970-01-01")
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
@@ -55,14 +44,14 @@ Describe "Get-HRPEventCalendar" {
             $expectedUri = "https://api.hrapi.co.uk/api/Event-Calendar/12345?dateFrom=1970-01-01T00:00:00&dateTo=1970-12-31T00:00:00"
             Get-HRPEventCalendar -ID 12345 -DateFrom (Get-Date "1970-01-01") -DateTo (Get-Date "1970-12-31")
 
-            Assert-MockCalled -CommandName Invoke-HRPAPI -Times 1 -Exactly -ParameterFilter {
+            Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and
                 $Method -eq "GET"
             }
         }
 
         It "returns nothing when API returns nothing" {
-            Mock Invoke-HRPAPI { $null }
+            Mock Invoke-HRPAPI -ModuleName HRProPS { $null }
             $response = Get-HRPEventCalendar -ID 12345 -Year (Get-Date "1970-01-01")
             $response | Should -Be $null
         }
