@@ -2,6 +2,8 @@
 
 A PowerShell module for interacting with HR Professional via their REST API.
 
+[![Pester Tests](https://github.com/Buenno/HRProPS/actions/workflows/pester_tests.yaml/badge.svg)](https://github.com/Buenno/HRProPS/actions/workflows/pester_tests.yaml)
+
 ## Description
 
 HRProPS provides cmdlets to interact with HR Professional via their API, allowing you to retrieve company data, employee information, event calendars, and expenses.
