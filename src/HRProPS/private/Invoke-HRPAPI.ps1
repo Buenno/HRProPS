@@ -1,5 +1,5 @@
-Function Invoke-HRPAPI {
-<#
+﻿Function Invoke-HRPAPI {
+    <#
 .SYNOPSIS
 Sends a request to the HR Pro web service.
 
@@ -26,6 +26,7 @@ This command retrieves all employee records from the HR Pro API, handling pagina
 #>
 
     [CmdletBinding()]
+    [OutputType([System.Collections.Generic.List[object]])]
     Param(
         [Parameter(Mandatory = $true)]
         [string] $Uri,
@@ -37,10 +38,10 @@ This command retrieves all employee records from the HR Pro API, handling pagina
     )
 
     Begin {
-        $retry          = $true
-        $retryCounter   = 0
-        $retryLimit     = 3
-        $pageSize       = 200
+        $retry = $true
+        $retryCounter = 0
+        $retryLimit = 3
+        $pageSize = 200
     }
 
     Process {
@@ -61,7 +62,7 @@ This command retrieves all employee records from the HR Pro API, handling pagina
                     else {
                         throw $_.Exception
                     }
-                } 
+                }
             }
             catch {
                 throw $_.Exception

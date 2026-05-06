@@ -1,5 +1,5 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../../testSetup.ps1")
 
 Describe "Get-HRPEmployee" {
     BeforeAll {
@@ -7,7 +7,7 @@ Describe "Get-HRPEmployee" {
             [pscustomobject]@{
                 ID = 1
                 Personal = [pscustomobject]@{
-                    Title   = "Mr"
+                    Title = "Mr"
                 }
                 Contract = [pscustomobject]@{
                     DaysPerWeek = 5
@@ -36,7 +36,7 @@ Describe "Get-HRPEmployee" {
             $testResponse.Termination.TerminationDate | Should -Be "2024-01-01"
             $testResponse.Termination.LastWorkingDate | Should -Be "2023-12-31"
 
-            
+
         }
 
         It "constructs the correct URI" {

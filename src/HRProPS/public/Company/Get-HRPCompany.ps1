@@ -1,5 +1,5 @@
-Function Get-HRPCompany {
-<#
+﻿Function Get-HRPCompany {
+    <#
 .SYNOPSIS
 Returns company data.
 
@@ -16,8 +16,8 @@ https://api.hrapi.co.uk/swagger/ui/index#!/Company/Company_Get
     [CmdletBinding()]
     Param()
 
-  Process {
-    $response = Invoke-HRPAPI -Uri "https://api.hrapi.co.uk/api/Company" -Method GET -ErrorAction Stop
-    $response
-  } 
+    Process {
+        $response = Invoke-HRPAPI -Uri "https://api.hrapi.co.uk/api/Company" -Method GET -ErrorAction Stop
+        $response
+    }
 }

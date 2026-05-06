@@ -1,5 +1,5 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../../testSetup.ps1")
 
 InModuleScope HRProPS {
     Describe "Get-HRPToken" {
@@ -16,7 +16,7 @@ InModuleScope HRProPS {
 
             Mock Invoke-RestMethod {
                 [PSCustomObject]@{
-                    access_token  = $testToken
+                    access_token = $testToken
                     refresh_token = "RefreshToken"
                 }
             }
@@ -59,7 +59,7 @@ InModuleScope HRProPS {
             It "passes the correct parameters to Invoke-RestMethod" {
                 Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly -ParameterFilter {
                     $Uri -eq "https://api.hrapi.co.uk/api/token/" -and
-                    $Method -eq "GET"     
+                    $Method -eq "GET"
                 }
             }
             It "overwrites `$script:Token on subsequent calls" {
@@ -67,7 +67,7 @@ InModuleScope HRProPS {
                 Get-HRPToken
 
                 $Script:Token.Token | Should -Not -Be $originalToken
-                $script:Token.Token | Should -Not -BeNullOrEmpty 
+                $script:Token.Token | Should -Not -BeNullOrEmpty
             }
         }
     }

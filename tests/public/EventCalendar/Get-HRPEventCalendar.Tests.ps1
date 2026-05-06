@@ -1,16 +1,16 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../../testSetup.ps1")
 
 Describe "Get-HRPEventCalendar" {
     BeforeAll {
         $testResponse = @(
             [pscustomobject]@{
                 ID = 1
-                Title   = "Event 1"
+                Title = "Event 1"
             },
             [pscustomobject]@{
                 ID = 2
-                Title   = "Event 2"
+                Title = "Event 2"
             }
         )
 
@@ -18,7 +18,7 @@ Describe "Get-HRPEventCalendar" {
             $testResponse
         }
     }
-    
+
     Context "When the function is executed" {
         It "returns the expected response from the API" {
             $testResponse = Get-HRPEventCalendar -ID 12345 -Year 1970
@@ -28,7 +28,7 @@ Describe "Get-HRPEventCalendar" {
             $testResponse[0].Title | Should -Be "Event 1"
             $testResponse[1].ID | Should -Be 2
             $testResponse[1].Title | Should -Be "Event 2"
-        } 
+        }
 
         It "constructs the correct URI for parameter set `"Year`"" {
             $expectedUri = "https://api.hrapi.co.uk/api/Event-Calendar/12345/1970"

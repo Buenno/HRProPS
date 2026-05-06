@@ -1,21 +1,21 @@
-function Set-HRPCredentials {
-<#
+﻿function Set-HRPCredential {
+    <#
 .SYNOPSIS
 Prompts for HR Pro API credentials and stores them securely.
 
 .DESCRIPTION
-The Set-HRPCredentials function prompts the user for a username and password using
+The Set-HRPCredential function prompts the user for a username and password using
 Get-Credential, then securely stores the resulting PSCredential object in the
 SecretManagement/SecretStore vault named "HRProPS".
 
-If the vault does not already exist, it is created automatically.  
+If the vault does not already exist, it is created automatically.
 If a credential already exists under the secret name "HRProPS", it is overwritten.
 
 This function does not take any parameters and does not store any configuration
 metadata outside of the SecretStore vault.
 
 .EXAMPLE
-Set-HRPCredentials
+Set-HRPCredential
 
 Prompts the user for HR Pro API credentials and stores them securely in the
 "HRProPS" SecretStore vault.
@@ -29,7 +29,7 @@ The credential is stored under the secret name:
 HRProPS
 
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param()
 
     Write-Verbose "Prompting for HR Pro API credentials."
@@ -49,9 +49,9 @@ HRProPS
         Write-Verbose "Vault '$vaultName' does not exist. Creating it now."
 
         Register-SecretVault -Name $vaultName `
-                             -ModuleName Microsoft.PowerShell.SecretStore `
-                             -DefaultVault `
-                             -ErrorAction Stop
+            -ModuleName Microsoft.PowerShell.SecretStore `
+            -DefaultVault `
+            -ErrorAction Stop
     }
 
     $secretName = "HRProPS"

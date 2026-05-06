@@ -1,10 +1,10 @@
-Function Get-HRPExpenseFile {
+﻿Function Get-HRPExpenseFile {
     <#
 .SYNOPSIS
 Returns either a single or list of ExpenseFile objects.
 
 .DESCRIPTION
-Returns either a single or list of ExpenseFile objects. Providing the ExpenseID will return a list, 
+Returns either a single or list of ExpenseFile objects. Providing the ExpenseID will return a list,
 and providing the ExpenseFileID will return a single, specific object.
 
 .PARAMETER ExpenseID
@@ -14,12 +14,12 @@ The ID of the expense for which to retrieve associated files.
 The ID of the expense file to retrieve.
 
 .EXAMPLE
-Get-HRPExpenseFile -ExpenseID 12345 
+Get-HRPExpenseFile -ExpenseID 12345
 
 This returns a list of ExpenseFile objects for the given ExpenseID.
 
 .EXAMPLE
-Get-HRPExpenseFile -ExpenseFileID 6789101112 
+Get-HRPExpenseFile -ExpenseFileID 6789101112
 
 This returns a ExpenseFile object for the given ExpenseFileID.
 
@@ -44,5 +44,5 @@ https://api.hrapi.co.uk/swagger/ui/index#!/ExpenseFile/ExpenseFile_GetByExpenseI
     Process {
         $response = Invoke-HRPAPI -Uri $Uri -Method GET -ErrorAction Stop
         $response
-    } 
+    }
 }

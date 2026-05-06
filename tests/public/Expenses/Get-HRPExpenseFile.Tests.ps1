@@ -1,16 +1,16 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../../testSetup.ps1")
 
 Describe "Get-HRPExpenseFile" {
     BeforeAll {
         $testResponse = @(
             [pscustomobject]@{
                 ExpenseID = 1
-                Name      = "First Expense"
+                Name = "First Expense"
             },
             [pscustomobject]@{
                 ExpenseID = 2
-                Name      = "Second Expense"
+                Name = "Second Expense"
             }
         )
 
@@ -18,7 +18,7 @@ Describe "Get-HRPExpenseFile" {
             $testResponse
         }
     }
-    
+
     Context "When the function is executed" {
         It "returns the expected response from the API for the ExpenseID parameter set" {
             $testResponse = Get-HRPExpenseFile -ExpenseID 12345
@@ -35,7 +35,7 @@ Describe "Get-HRPExpenseFile" {
             $testResponse = @(
                 [pscustomobject]@{
                     ExpenseID = 1
-                    Name      = "First Expense"
+                    Name = "First Expense"
                 }
             )
 
@@ -47,7 +47,7 @@ Describe "Get-HRPExpenseFile" {
         }
         It "constructs the correct URI for parameter set `"ExpenseID`"" {
             $expectedUri = "https://api.hrapi.co.uk/api/ExpenseFile/Expense/12345"
-            Get-HRPExpenseFile -ExpenseID 12345 
+            Get-HRPExpenseFile -ExpenseID 12345
 
             Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and

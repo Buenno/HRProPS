@@ -1,19 +1,19 @@
-function Get-HRPCredentials {
-<#
+﻿function Get-HRPCredential {
+    <#
 .SYNOPSIS
 Retrieves the stored HR Pro API credentials.
 
 .DESCRIPTION
-The Get-HRPCredentials function retrieves the PSCredential object previously
+The Get-HRPCredential function retrieves the PSCredential object previously
 stored in the SecretManagement/SecretStore vault named "HRProPS".
 
-The credential must have been stored using Set-HRPCredentials.  
+The credential must have been stored using Set-HRPCredentials.
 If the vault or secret does not exist, the function will throw a clear error.
 
 This function does not take any parameters.
 
 .EXAMPLE
-$cred = Get-HRPCredentials
+$cred = Get-HRPCredential
 
 Retrieves the stored HR Pro API credentials and assigns them to $cred.
 

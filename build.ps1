@@ -1,24 +1,10 @@
-<#
-.Synopsis
-	Build script invoked by Invoke-Build.
-
-.Description
-	TODO: Declare build script parameters as usual by param().
-	The parameters are specified for Invoke-Build on invoking.
-#>
-
-param(
-    [switch]$Clean
-)
-
-$moduleName = "HRProPS"
-$root       = $PSScriptRoot 
+﻿$moduleName = "HRProPS"
+$root = $PSScriptRoot
 $output = Join-Path $root "build\$moduleName"
 $moduleSrcPath = Join-Path $root ".\src\HRProPS"
-$moduleManifest = Join-Path $moduleSrcPath "$moduleName.psd1"
 
 task Clean {
-    if (Test-Path -Path $output){
+    if (Test-Path -Path $output) {
         Remove-Item -Path $output -Recurse -Force
     }
 }
@@ -64,25 +50,18 @@ task TestManifest Manifest, {
     Test-ModuleManifest -Path (Join-Path $output "$moduleName.psd1") | Out-Null
 }
 
-#task Test TestManifest, {
-#    Invoke-Pester -Path (Join-Path $root "tests") -Output Detailed
-#}
+task Test TestManifest, {
+    Invoke-Pester -Path (Join-Path $root "tests") -Output Detailed
+}
 
 #task Package Build `
 #    -Inputs (Get-ChildItem $output -Recurse) `
 #    -Outputs "$output/$moduleName.zip" {
-#        Compress-Archive -Path $output `
-#            -DestinationPath (Join-Path $root "build\$moduleName.zip") `
-#            -Force
-#    }
-
-task Build TestManifest
-
-#{
-#    #if ($Clean) {
-#    #    Invoke-Build Clean
-#    #}
-#    write-host "Hi"
+#    Compress-Archive -Path $output `
+#        -DestinationPath (Join-Path $root "build\$moduleName.zip") `
+#        -Force
 #}
+
+task Build Clean, Test
 
 task . Build

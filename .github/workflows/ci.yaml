@@ -1,0 +1,55 @@
+name: Continuous Integration
+
+on:
+    push:
+        branches:
+            - main
+            - "**"
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    linting:
+        name: Lint Source
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+
+            - name: Install PSScriptAnalyzer
+              shell: pwsh
+              run: Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+
+            - name: Run PSScriptAnalyzer
+              shell: pwsh
+              run: Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./tests/PSScriptAnalyzerSettings.psd1 -ErrorAction Stop
+
+    pester-tests:
+        name: Pester Tests
+        runs-on: ubuntu-latest
+        needs: linting
+
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+
+            - name: Install Pester
+              shell: pwsh
+              run: Install-Module Pester -Force -Scope CurrentUser -MinimumVersion 5.7.1
+
+            - name: Install Dependencies
+              shell: pwsh
+              run: Install-Module "Microsoft.PowerShell.SecretManagement","Microsoft.PowerShell.SecretStore","InvokeBuild" -Force -Scope CurrentUser
+
+            - name: Build Module
+              shell: pwsh
+              run: Invoke-Build -File ./build.ps1 -Task Build
+
+            - name: Import Module
+              shell: pwsh
+              run: Import-Module -Name ./build/HRProPS -Force
+            
+            - name: Run Pester Tests
+              shell: pwsh
+              run: Invoke-Pester -CI -PassThru
