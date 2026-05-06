@@ -1,5 +1,5 @@
-Function Get-HRPToken {
-<#
+﻿Function Get-HRPToken {
+    <#
 .SYNOPSIS
 Requests an Access Token for REST API authentication.
 
@@ -27,7 +27,7 @@ https://api.hrapi.co.uk/swagger/ui/index#!/Token/Token_Get
         $authorizationInfo = [Convert]::ToBase64String($encoded)
         $headers = @{
             "Authorization" = "Basic $($authorizationInfo)"
-            "grant_type"    = "password"
+            "grant_type" = "password"
         }
     }
     Process {
@@ -36,13 +36,13 @@ https://api.hrapi.co.uk/swagger/ui/index#!/Token/Token_Get
 
         # Build an authentication header to be used in future API calls
         $tokenObject = [pscustomobject]@{
-            Token  = $token.access_token
+            Token = $token.access_token
             Header = @{
                 "Authorization" = "Bearer $($token.access_token)"
-                "grant_type"    = "access_token"
+                "grant_type" = "access_token"
             }
         }
-    
+
         # Store authentication object
         $script:Token = $tokenObject
     }

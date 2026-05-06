@@ -1,12 +1,12 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../../testSetup.ps1")
 
 Describe "Get-HRPExpense" {
     BeforeAll {
         $testResponse = @(
             [pscustomobject]@{
                 ID = 1
-                ParentID   = 12
+                ParentID = 12
             }
         )
 
@@ -23,18 +23,18 @@ Describe "Get-HRPExpense" {
             $testResponse.Count | Should -Be  1
             $testResponse[0].ID | Should -Be 1
             $testResponse[0].ParentID | Should -Be 12
-            
+
         }
 
         It "returns the expected response from the API for the EmployeeID parameter set" {
             $testResponse = @(
                 [pscustomobject]@{
                     ID = 1
-                    ParentID   = 12
+                    ParentID = 12
                 },
                 [pscustomobject]@{
                     ID = 2
-                    ParentID   = 22
+                    ParentID = 22
                 }
             )
 
@@ -50,7 +50,7 @@ Describe "Get-HRPExpense" {
 
         It "constructs the correct URI for parameter set `"ExpenseID`"" {
             $expectedUri = "https://api.hrapi.co.uk/api/Expense/12345"
-            Get-HRPExpense -ExpenseID 12345 
+            Get-HRPExpense -ExpenseID 12345
 
             Assert-MockCalled -CommandName Invoke-HRPAPI -ModuleName HRProPS -Times 1 -Exactly -ParameterFilter {
                 $Uri -eq $expectedUri -and

@@ -1,5 +1,5 @@
-# Execute setup script. Imports the correct module for the environment. 
-. (Join-Path $PSScriptRoot "..\TestSetup.ps1")
+﻿# Execute setup script. Imports the correct module for the environment.
+. (Join-Path $PSScriptRoot "../testSetup.ps1")
 
 InModuleScope HRProPS {
     Describe "Invoke-HRPAPI" {
@@ -11,12 +11,12 @@ InModuleScope HRProPS {
                 )
             }
 
-            Mock Get-HRPToken -ModuleName HRProPS { 
-                $script:Token = @{ 
-                    Header = @{ 
-                        Authorization = "Bearer newtoken" 
-                    } 
-                } 
+            Mock Get-HRPToken -ModuleName HRProPS {
+                $script:Token = @{
+                    Header = @{
+                        Authorization = "Bearer newtoken"
+                    }
+                }
             }
         }
 
@@ -25,7 +25,7 @@ InModuleScope HRProPS {
                 Invoke-HRPAPI -Uri "https://testurl.co.uk" -Method Get
 
                 Should -Invoke Invoke-RestMethod -Times 1 -Exactly -ParameterFilter {
-                    $URI -eq "https://testurl.co.uk" -and 
+                    $URI -eq "https://testurl.co.uk" -and
                     $Method -eq "GET"
                 }
             }
@@ -48,9 +48,9 @@ InModuleScope HRProPS {
                     $message = "Unauthorised"
                     $object = New-Object System.Net.Http.HttpResponseMessage(401)
                     throw [Microsoft.PowerShell.Commands.HttpResponseException]::new($message, $object)
-                } -ParameterFilter {$callCount -eq 0}
+                } -ParameterFilter { $callCount -eq 0 }
 
-                Mock Invoke-RestMethod { 
+                Mock Invoke-RestMethod {
                     $script:callCount++
                     @("item1")
                 } -ParameterFilter { $callCount -eq 1 }
@@ -80,54 +80,54 @@ InModuleScope HRProPS {
         Context "When paginating with -Paginate" {
             BeforeEach {
                 Mock Invoke-RestMethod {
-                    1..200 | ForEach-Object {"item$_"}
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk/"}
+                    1..200 | ForEach-Object { "item$_" }
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk/" }
 
                 Mock Invoke-RestMethod {
-                    201..250 | ForEach-Object {"item_$_"}
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk/2"}
+                    201..250 | ForEach-Object { "item_$_" }
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk/2" }
 
                 Mock Invoke-RestMethod {
                     @()
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk/3"}
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk/3" }
             }
             It "paginates if first page has 200 items" {
                 $results = Invoke-HRPAPI -Uri "https://testurl.co.uk" -Method Get -Paginate
 
-                $results.Count | Should -Be 250 
+                $results.Count | Should -Be 250
                 Assert-MockCalled Invoke-RestMethod -Times 2 -Exactly
             }
 
             It "does not paginate when first page has less than 200 results" {
                 Mock Invoke-RestMethod {
-                    1..50 | ForEach-Object {"item$_"}
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk"}
+                    1..50 | ForEach-Object { "item$_" }
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk" }
 
                 $results = Invoke-HRPAPI -Uri "https://testurl.co.uk" -Method Get -Paginate
 
-                $results.Count | Should -Be 50 
+                $results.Count | Should -Be 50
                 Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly
             }
 
             It "stops when next page is empty" {
                 Mock Invoke-RestMethod {
-                    1..200 | ForEach-Object {"item$_"}
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk/"}
+                    1..200 | ForEach-Object { "item$_" }
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk/" }
 
                 Mock Invoke-RestMethod {
                     @()
-                } -ParameterFilter {$Uri -eq "https://testurl.co.uk/2"}
+                } -ParameterFilter { $Uri -eq "https://testurl.co.uk/2" }
 
                 $results = Invoke-HRPAPI -Uri "https://testurl.co.uk" -Method Get -Paginate
 
-                $results.Count | Should -Be 200 
+                $results.Count | Should -Be 200
                 Assert-MockCalled Invoke-RestMethod -Times 2 -Exactly
             }
 
             It "does not paginate when -Paginate is not supplied" {
                 $results = Invoke-HRPAPI -Uri "https://testurl.co.uk" -Method Get
 
-                $results.Count | Should -Be 200 
+                $results.Count | Should -Be 200
                 Assert-MockCalled Invoke-RestMethod -Times 1 -Exactly
             }
         }
