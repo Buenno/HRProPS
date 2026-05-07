@@ -6,6 +6,8 @@ on:
             - main
             - "**"
     pull_request:
+        branches:
+            - main
     workflow_dispatch:
 
 jobs:
@@ -23,7 +25,8 @@ jobs:
 
             - name: Run PSScriptAnalyzer
               shell: pwsh
-              run: Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings ./tests/PSScriptAnalyzerSettings.psd1 -ErrorAction Stop
+              run: Invoke-ScriptAnalyzer -Path ./src -Recurse -Settings
+                  ./tests/PSScriptAnalyzerSettings.psd1 -ErrorAction Stop
 
     pester-tests:
         name: Pester Tests
@@ -40,7 +43,9 @@ jobs:
 
             - name: Install Dependencies
               shell: pwsh
-              run: Install-Module "Microsoft.PowerShell.SecretManagement","Microsoft.PowerShell.SecretStore","InvokeBuild" -Force -Scope CurrentUser
+              run: Install-Module
+                  "Microsoft.PowerShell.SecretManagement","Microsoft.PowerShell.SecretStore","InvokeBuild"
+                  -Force -Scope CurrentUser
 
             - name: Build Module
               shell: pwsh
@@ -49,7 +54,7 @@ jobs:
             - name: Import Module
               shell: pwsh
               run: Import-Module -Name ./build/HRProPS -Force
-            
+
             - name: Run Pester Tests
               shell: pwsh
-              run: Invoke-Pester -CI -PassThru
+              run: Invoke-Pester -CI
