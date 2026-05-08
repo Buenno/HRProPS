@@ -1,0 +1,62 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*"
+
+jobs:
+    release:
+        name: Build, Package, Release
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+
+            - name: Install Pester
+              shell: pwsh
+              run: Install-Module Pester -Force -Scope CurrentUser -MinimumVersion 5.7.1
+
+            - name: Install Dependencies
+              shell: pwsh
+              run: |
+                  Install-Module `
+                    Microsoft.PowerShell.SecretManagement,
+                    Microsoft.PowerShell.SecretStore,
+                    InvokeBuild `
+                  -Force -Scope CurrentUser
+
+            - name: Extract version from tag
+              shell: pwsh
+              run: |
+                  $version = "${{ github.ref_name }}" -replace '^v',''
+                  "MODULE_VERSION=$version" >> $env:GITHUB_ENV
+
+            - name: Build Module
+              shell: pwsh
+              run: Invoke-Build -File ./build.ps1 -Task Build
+
+            - name: Import Module
+              shell: pwsh
+              run: Import-Module -Name ./build/HRProPS -Force
+
+            - name: Run Pester Tests
+              shell: pwsh
+              run: Invoke-Pester -CI
+
+            - name: Package Module
+              shell: pwsh
+              run: Invoke-Build -File ./build.ps1 -Task Package
+
+            - name: Generate Changelog
+              id: changelog
+              uses: metcalfc/changelog-generator@v4
+              with:
+                  myToken: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  body: ${{ steps.changelog.outputs.changelog }}
+                  files: ./build/release/HRProPS.zip
