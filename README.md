@@ -8,28 +8,24 @@ A PowerShell module for interacting with HR Professional via their REST API.
 
 HRProPS provides cmdlets to interact with HR Professional via their API, allowing you to retrieve company data, employee information, event calendars, and expenses.
 
-## Prerequisites
-
-- PowerShell 5.1 or later
-- Microsoft.PowerShell.SecretManagement module
-- Microsoft.PowerShell.SecretStore module
-
 ## Installation
 
 ### Building the Module
 
-Use PSake to build the module:
+Use InvokeBuild to build the module:
 
 ```powershell
-Invoke-psake -buildFile .\psake.ps1 -taskList compile
+Invoke-Build -Task Build -File .\build.ps1
 ```
+
+You can also grab the latest release from the GitHub releases page.
 
 ### Installing the Module
 
 Import the module manually:
 
 ```powershell
-Import-Module .\BuildOutput\HRProPS\{version}\HRProPS.psd1
+Import-Module .\build\HRProPS\HRProPS.psd1
 ```
 
 Or move the module to one of the PSModulePath paths for automatic import:
@@ -58,8 +54,8 @@ This will prompt for your HR Pro API username and password and store them in a S
 
 ### Configuration
 
-- **Get-HRPCredentials**: Retrieves the stored HR Pro API credentials.
-- **Set-HRPCredentials**: Prompts for HR Pro API credentials and stores them securely.
+- **Get-HRPCredential**: Retrieves the stored HR Pro API credential.
+- **Set-HRPCredential**: Prompts for HR Pro API credential and stores them securely.
 
 ### Employees
 
@@ -127,4 +123,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-Toby Williams
+Buenno
