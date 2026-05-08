@@ -2,7 +2,7 @@
 
 A PowerShell module for interacting with HR Professional via their REST API.
 
-[![Pester Tests](https://github.com/Buenno/HRProPS/actions/workflows/pester_tests.yaml/badge.svg)](https://github.com/Buenno/HRProPS/actions/workflows/pester_tests.yaml)
+[![Continuous Integration](https://github.com/Buenno/HRProPS/actions/workflows/ci.yaml/badge.svg)](https://github.com/Buenno/HRProPS/actions/workflows/ci.yaml)
 
 ## Description
 
